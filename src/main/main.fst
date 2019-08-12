@@ -32,8 +32,8 @@ exception InvalidIntRange
 val int_to_nat : x:int -> ML nat
 let int_to_nat x = if x < 0 then raise InvalidIntRange else x
 
-let data_from_client = "FROM: tikutaku0128@icloud.com
-To: takukitamura.io@gmail.com
+let data_from_client = "FROM: example2@icloud.com
+To: example2@gmail.com
 Subject: Test
 
 Hello!!
@@ -47,7 +47,7 @@ let _ = print_string "---DATA FROM CLIENT---\n"
 let _ = print_string data_from_client
 
 let colon = ':'
-let header_field = "To: takukitamura.io@gmail.com"
+let header_field = "To: example2@gmail.com"
 
 // val checkedRead : filename -> ML string
 // val is_exisist : str:string{length str > 0} -> char -> x:bool
