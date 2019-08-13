@@ -17,14 +17,14 @@ let print_bool b =
 let print_string_and_int s d =
      print_string (sprintf "%s%d\n" s d)
 
-val strFixedN :
-     n:nat -> 
-     str:string{(List.length (list_of_string str)) = n} ->
-     str:string{(List.length (list_of_string str)) = n}
+// val strFixedN :
+//      n:nat -> 
+//      str:string{(length str) = n} ->
+//      str:string{(length str) = n}
 
-let strFixedN n str = str
+// let strFixedN n str = str
 
-let strFixed str = strFixedN (List.length (list_of_string str)) str
+// let strFixed str = strFixedN (length str) str
 
 // let subStr = let s = strFixed "ABCDE" in sub s 0 5
 
@@ -73,13 +73,19 @@ let header_field_length = int_to_nat(length header_field)
 
 let _ = print_int index
 
-let _ = print_string_and_int "header_field_length: " ( length header_field ) // 29
+let _ = print_string_and_int "header_field_length: " ( length header_field ) // 22
 let _ = print_string_and_int "index: " index // 2
 
 
-let s = strFixed "ABCDEFGHIJKLMNOPQR"
+val i : nat
+let i = index
 
-val subStr : string
-let subStr = sub s 0 5
+val s : string
+let s = header_field
 
-let _ = print_string subStr
+val l : nat
+let l = int_to_nat (header_field_length - i)
+
+let subStr = assert_norm(i + l <= length s); sub s i l
+
+// let _ = print_string subStr
