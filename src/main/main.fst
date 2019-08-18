@@ -1,11 +1,8 @@
 module Main
 open FStar.IO
 open FStar.Printf
-open FStar.All
 
 open FStar.String
-
-// #set-options "--initial_fuel 1000 --initial_ifuel 1000 --max_fuel 1000 --max_ifuel 1000 --min_fuel 1000"
 
 let print_string s =
      print_string (sprintf "%s" s)
@@ -13,24 +10,17 @@ let print_int d =
      print_string (sprintf "%d\n" d)
 let print_bool b = 
      print_string (sprintf "%b\n" b)
-     
 let print_string_and_int s d =
      print_string (sprintf "%s%d\n" s d)
 
-// val strFixedN :
-//      n:nat -> 
-//      str:string{(length str) = n} ->
-//      str:string{(length str) = n}
+let is_nat x = if x >= 0 then true else false
 
-// let strFixedN n str = str
-
-// let strFixed str = strFixedN (length str) str
-
-// let subStr = let s = strFixed "ABCDE" in sub s 0 5
-
-exception InvalidIntRange
-val int_to_nat : x:int -> ML nat
-let int_to_nat x = if x < 0 then raise InvalidIntRange else x
+val is_exisist : str:string -> char -> x:bool
+let is_exisist str char = 
+     let i = (index_of str char) in 
+          if i = (-1) then 
+               false
+          else true
 
 let data_from_client = "FROM: example2@icloud.com
 To: example2@gmail.com
@@ -41,51 +31,34 @@ Hello!!
 Good by!!
 .\n"
 
-exception InvalidHeadField
-
 let _ = print_string "---DATA FROM CLIENT---\n"
 let _ = print_string data_from_client
+let _ = print_string "----------------------\n"
 
 let colon = ':'
 let header_field = "To: example2@gmail.com"
 
-// val checkedRead : filename -> ML string
-// val is_exisist : str:string{length str > 0} -> char -> x:bool
-val is_exisist : str:string -> char -> x:bool
-let is_exisist str char = 
-     let i = (index_of str char) in 
-          if i = (-1) then 
-               false
-          else true
+val int_index : int
+let int_index = index_of header_field colon
 
-val get_index : str:string -> char -> ML int
-let get_index str char = 
-     let can_get_index = is_exisist str char in
-          if can_get_index then
-               index_of str char 
-          else raise InvalidHeadField
-
-val index : nat
-let index = int_to_nat (get_index header_field colon)
+val nat_index : nat
+let nat_index =
+     assert_norm(is_nat int_index);
+     int_index
 
 val header_field_length : nat
-let header_field_length = int_to_nat(length header_field)
+let header_field_length = length header_field
 
-let _ = print_int index
+val int_len_minus_index : int
+let int_len_minus_index = header_field_length - nat_index
 
-let _ = print_string_and_int "header_field_length: " ( length header_field ) // 22
-let _ = print_string_and_int "index: " index // 2
+val nat_len_minus_index : nat
+let nat_len_minus_index =
+     assert_norm(is_nat int_len_minus_index);
+     int_len_minus_index
 
+let subStr =
+     assert_norm(nat_index + nat_len_minus_index <= header_field_length);
+     sub header_field nat_index nat_len_minus_index
 
-val i : nat
-let i = index
-
-val s : string
-let s = header_field
-
-val l : nat
-let l = int_to_nat (header_field_length - i)
-
-let subStr = assert_norm(i + l <= length s); sub s i l
-
-// let _ = print_string subStr
+let _ = print_string subStr
