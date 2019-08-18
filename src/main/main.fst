@@ -44,7 +44,7 @@ let int_index = index_of header_field colon
 val nat_index : nat
 let nat_index =
      assert_norm(is_nat int_index);
-     int_index
+     int_index + 1
 
 val header_field_length : nat
 let header_field_length = length header_field
@@ -61,4 +61,4 @@ let subStr =
      assert_norm(nat_index + nat_len_minus_index <= header_field_length);
      sub header_field nat_index nat_len_minus_index
 
-let _ = print_string subStr
+let _ = print_string "subStr"; print_string subStr
