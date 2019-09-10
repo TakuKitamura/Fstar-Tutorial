@@ -10,6 +10,3 @@ debug:
 
 play:
 	krml playground.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Playground playground.fst && ./a.out
-
-krml: 
-	krml main.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Main main.fst && ./a.out

@@ -3,7 +3,6 @@ module Playground
 open FStar.Int32
 open LowStar.Printf
 
-module Main
 open FStar.IO
 open FStar.Printf
 
