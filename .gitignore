@@ -28,3 +28,7 @@ setup.log
 *.checked
 *.checked.lax
 *~
+
+# Fstar
+
+out
