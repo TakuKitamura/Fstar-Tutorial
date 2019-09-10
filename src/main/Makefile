@@ -13,3 +13,5 @@ playground:
 	$(OCAMLOPT) out/Playground.ml -o out/playground.exe
 	./out/playground.exe
 
+krml: 
+	krml krml.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Krml krml.fst
