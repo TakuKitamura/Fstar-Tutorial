@@ -21,3 +21,10 @@ setup.log
 
 # Merlin configuring file for Vim and Emacs
 .merlin
+
+# Kremlin
+*.native
+*.byte
+*.checked
+*.checked.lax
+*~
