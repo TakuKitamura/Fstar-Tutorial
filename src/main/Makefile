@@ -8,10 +8,8 @@ all:
 debug: 
 	fstar main.fst --debug 'Main' --detail_errors --debug_level Extreme --detail_hint_replay --warn_error -272
 
-playground:
-	fstar playground.fst --odir out --codegen OCaml --extract 'Playground'  --debug 'Playground' --detail_errors --debug_level Extreme --detail_hint_replay --warn_error -272
-	$(OCAMLOPT) out/Playground.ml -o out/playground.exe
-	./out/playground.exe
+play:
+	krml playground.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Playground playground.fst && ./a.out
 
 krml: 
-	krml krml.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Krml krml.fst
+	krml main.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Main main.fst && ./a.out
