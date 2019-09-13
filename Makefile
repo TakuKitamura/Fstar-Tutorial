@@ -9,4 +9,4 @@ debug:
 	fstar main.fst --debug 'Main' --detail_errors --debug_level Extreme --detail_hint_replay --warn_error -272
 
 play:
-	krml playground.fst -verbose -drop WasmSupport -tmpdir ./out -no-prefix Playground playground.fst && ./a.out
+	krml playground.fst -verbose -verify -drop WasmSupport -tmpdir ./out -no-prefix Playground playground.fst && ./a.out
