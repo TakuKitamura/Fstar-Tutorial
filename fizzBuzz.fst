@@ -1,16 +1,11 @@
 module FizzBuzz
 
 open LowStar.Printf
-open LowStar.BufferOps
 open FStar.HyperStack.ST
 
-module S = FStar.Seq
 module B = LowStar.Buffer
-module LB = LowStar.Monotonic.Buffer
-module M = LowStar.Modifies
 module U = FStar.UInt
 module U32 = FStar.UInt32
-module ST = FStar.HyperStack.ST
 
 val fizz_buzz: len:U32.t -> Stack C.exit_code
   (requires fun _ -> true)
