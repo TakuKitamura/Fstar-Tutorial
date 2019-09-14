@@ -30,7 +30,7 @@ let fizz_buzz len =
     else printf "%ul: \n" count done
   in
   C.Loops.for 0ul len inv body;
-  (* return *) C.EXIT_SUCCESSl
+  (* return *) C.EXIT_SUCCESS
 
 let main ()
 =
