@@ -32,3 +32,6 @@ setup.log
 
 # Fstar
 out
+
+# Vscode
+.vscode
