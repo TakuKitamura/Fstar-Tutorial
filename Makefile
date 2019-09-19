@@ -18,4 +18,4 @@ forUint32:
 	krml  -verbose -verify -drop WasmSupport -tmpdir ./out -no-prefix ForUint32 forUint32.fst && ./a.out
 
 fizzBuzz:
-	krml  -verbose -verify -add-include '"kremlin/internal/compat.h"' -drop WasmSupport -tmpdir ./out -no-prefix FizzBuzz fizzBuzz.fst && ./a.out
+	krml -verify -wasm -d force-c -tmpdir ./out -no-prefix FizzBuzz fizzBuzz.fst && ./a.out
