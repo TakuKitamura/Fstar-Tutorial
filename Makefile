@@ -19,3 +19,5 @@ forUint32:
 
 fizzBuzz:
 	krml -verify -drop WasmSupport -tmpdir ./out -no-prefix FizzBuzz fizzBuzz.fst && ./a.out
+server:
+	krml -verify -drop WasmSupport -tmpdir ./out -no-prefix Server Server.fst main-Server.c helpers-Server.c && ./a.out
