@@ -29,7 +29,6 @@ assume val bufstrcpy (b: B.buffer C.char) (s: C.String.t): Stack U32.t
     U32.v ret = C.String.length s - 1 /\
     Seq.equal (Seq.slice (B.as_seq h1 b) 0 (U32.v ret)) (Seq.slice (C.String.v s) 0 (U32.v ret))))
 
-
 assume val print_u32 (dst: B.buffer C.char) (i: U32.t): Stack U32.t
   (requires (fun h ->
     B.live h dst /\ B.length dst >= 10))
@@ -240,7 +239,7 @@ let server request response =
         else
           respond_404 response
       else
-        let n = bufstrcpy response !$"error" in
+        let n = bufstrcpy response !$"invalid request." in
         n
   in
   pop_frame ();
