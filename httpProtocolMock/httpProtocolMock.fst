@@ -1,4 +1,4 @@
-module Server
+module HttpProtocolMock
 
 module B = LowStar.Buffer
 module M = LowStar.Modifies
@@ -10,11 +10,36 @@ open LowStar.BufferOps
 module HS = FStar.HyperStack
 module ST = FStar.HyperStack.ST
 
+open LowStar.Printf
+
 type pointer t =
   b:B.buffer t { B.length b = 1 }
 
 type server_state =
   pointer U32.t
+
+assume val bufstrcpy (b: B.buffer C.char) (s: C.String.t): Stack U32.t
+  (requires (fun h ->
+    B.live h b /\
+    B.length b >= C.String.length s - 1))
+  (ensures (fun h0 ret h1 ->
+    B.live h1 b /\
+    B.length b >= C.String.length s /\
+    M.(modifies (loc_buffer b) h0 h1) /\
+    U32.v ret = C.String.length s - 1 /\
+    Seq.equal (Seq.slice (B.as_seq h1 b) 0 (U32.v ret)) (Seq.slice (C.String.v s) 0 (U32.v ret))))
+
+
+assume val print_u32 (dst: B.buffer C.char) (i: U32.t): Stack U32.t
+  (requires (fun h ->
+    B.live h dst /\ B.length dst >= 10))
+  (ensures (fun h0 ret h1 ->
+    M.(modifies (loc_buffer dst) h0 h1) /\
+    U32.v ret <= 10 /\
+    B.live h1 dst))
+
+inline_for_extraction noextract
+let (!$) = C.String.of_literal
 
 let zero_terminated (h: HS.mem) (b: B.buffer C.char) =
   let s = B.as_seq h b in
@@ -22,10 +47,6 @@ let zero_terminated (h: HS.mem) (b: B.buffer C.char) =
   B.length b <= FStar.UInt.max_int 32 /\
   C.uint8_of_char (Seq.index s (B.length b - 1)) = 0uy
 
-(**
-  @summary: compares `b` and `s` for equality (without `s`'s trailing zero)
-  @type: true
-*)
 val bufstrcmp (b: B.buffer C.char) (s: C.String.t): Stack bool
   (requires (fun h ->
     B.live h b /\
@@ -125,63 +146,7 @@ let bufstrcmp b s =
   r
 
 
-(**
-  @summary: writes out the contents of `s` up to its trailing zero (excluded) into `b`
-  @returns: the number of bytes written out in `b`
-  @type: true
-*)
-assume val bufstrcpy (b: B.buffer C.char) (s: C.String.t): Stack U32.t
-  (requires (fun h ->
-    B.live h b /\
-    B.length b >= C.String.length s - 1))
-  (ensures (fun h0 ret h1 ->
-    B.live h1 b /\
-    B.length b >= C.String.length s /\
-    M.(modifies (loc_buffer b) h0 h1) /\
-    U32.v ret = C.String.length s - 1 /\
-    Seq.equal (Seq.slice (B.as_seq h1 b) 0 (U32.v ret)) (Seq.slice (C.String.v s) 0 (U32.v ret))))
 
-
-(**
-  @summary: prints the given number in decimal format in the destination buffer
-  @returns: the number of bytes written out in `dst`
-  @type: true
-*)
-assume val print_u32 (dst: B.buffer C.char) (i: U32.t): Stack U32.t
-  (requires (fun h ->
-    B.live h dst /\ B.length dst >= 10))
-  (ensures (fun h0 ret h1 ->
-    M.(modifies (loc_buffer dst) h0 h1) /\
-    U32.v ret <= 10 /\
-    B.live h1 dst))
-
-
-(**
-  @summary: writes out the contents of `b2` up to its trailing zero (excluded) into `b1`
-  @returns: the number of bytes written out in `b1`
-  @type: true
-*)
-assume val bufcpy (b1 b2: B.buffer C.char): Stack U32.t
-  (requires (fun h ->
-    B.live h b1 /\ B.live h b2 /\
-    zero_terminated h b2 /\
-    B.length b1 >= B.length b2 - 1))
-  (ensures (fun h0 ret h1 ->
-    B.live h1 b1 /\ B.live h1 b2 /\
-    zero_terminated h1 b2 /\
-    B.length b2 >= B.length b1 - 1 /\
-    M.(modifies (loc_buffer b1) h0 h1) /\ (
-    U32.v ret < B.length b1 /\
-    Seq.equal (Seq.slice (B.as_seq h1 b1) 0 (U32.v ret)) (Seq.slice (B.as_seq h1 b2) 0 (U32.v ret)))))
-
-
-(** The length that our caller has allocated for us in the destination buffer. *)
-unfold noextract
-let response_length = 65535
-
-
-inline_for_extraction noextract
-let (!$) = C.String.of_literal
 
 #set-options "--max_ifuel 0 --max_fuel 0"
 
@@ -214,42 +179,6 @@ let respond response payload payloadlen =
   U32.(n1 +^ n2 +^ n3 +^ payloadlen)
 #pop-options
 
-let respond_index (response: B.buffer C.char): Stack U32.t
-  (requires (fun h0 ->
-    B.live h0 response /\
-    B.length response >= 256))
-  (ensures (fun h0 n h1 ->
-    B.live h1 response /\
-    M.(modifies (loc_buffer response) h0 h1) /\
-    U32.v n <= 256)) =
-  push_frame ();
-  let payload = B.alloca (C.char_of_uint8 0uy) 256ul in
-  let payloadlen = bufstrcpy payload !$"<html><body>Hello world</body></html>" in
-  let n = respond response payload payloadlen in
-  pop_frame ();
-  n
-
-#push-options "--z3rlimit 10"
-let respond_stats (response: B.buffer C.char) (state: U32.t): Stack U32.t
-  (requires (fun h0 ->
-    B.live h0 response /\
-    B.length response >= 256))
-  (ensures (fun h0 n h1 ->
-    B.live h1 response /\
-    M.(modifies (loc_buffer response) h0 h1) /\
-    U32.v n <= 256)) =
-  push_frame ();
-  let payload = B.alloca (C.char_of_uint8 0uy) 256ul in
-  let n1 = bufstrcpy payload !$"<html>State = " in
-  let next = B.offset payload n1 in
-  let n2 = print_u32 next state in
-  let next = B.offset next n2 in
-  let n3 = bufstrcpy next !$"</html>" in
-  let n = respond response payload U32.(n1+^n2+^n3) in
-  pop_frame ();
-  n
-#pop-options
-
 #reset-options "--z3cliopt smt.arith.nl=false --z3rlimit 50 --max_ifuel 0 --max_fuel 0"
 
 let respond_404 (response: B.buffer C.char): Stack U32.t
@@ -275,52 +204,45 @@ let respond_404 (response: B.buffer C.char): Stack U32.t
   n
 
 #reset-options "--max_ifuel 0 --max_fuel 0"
+unfold noextract
+let response_length = 2048
 
-(**
-  @summary: a demo server
-  @type: true
-
-  This is just to demonstrate some low-level style programming along with
-  manipulation of strings.
-*)
-val server (state: server_state) (request response: B.buffer C.char):
+val server (request response: B.buffer C.char):
   Stack U32.t
     (requires (fun h ->
-      B.live h state /\ B.live h request /\ B.live h response /\
-      B.disjoint state request /\ B.disjoint state response /\
+      B.live h request /\ B.live h response /\
       B.disjoint request response /\
       zero_terminated h request /\
       B.length response = response_length))
     (ensures (fun h0 _ h1 ->
-      B.live h1 state /\ B.live h1 request /\ B.live h1 response))
-let server state request response =
+      B.live h1 request /\ B.live h1 response))
+
+#push-options "--z3rlimit 20"
+let server request response =
   push_frame ();
-
-  // Note: need to use the special operator +%^ (wraparound). Otherwise, we'd
-  // have to show that there's no overflow.
-  U32.(state.(0ul) <- state.(0ul) +%^ 1ul);
-
-  // Assert that the request starts with "GET " (note the space). That way, we
-  // learn that the request is at least five characters long.
   let n =
-    if not (bufstrcmp request !$"GET ") then
-      let n = bufstrcpy response !$"error" in
-      n
-
-    else
-      // Bug of mine here: I was advancing by 5 instead of 4...!
-      let request = B.offset request 4ul in
-
-      if bufstrcmp request !$"/ " then
-        respond_index response
-
-      else if bufstrcmp request !$"/stats " then
-        respond_stats response state.(0ul)
-
+    let payload = B.alloca (C.char_of_uint8 0uy) 256ul in
+      if (bufstrcmp request !$"GET ") then
+        let request = B.offset request 4ul in
+        if bufstrcmp request !$"/ " then
+          let payloadlen = bufstrcpy payload !$"<html><h1>Hi.<br>It works!</h1></html>" in
+          respond response payload payloadlen 
+        else if bufstrcmp request !$"/hello" then
+          let payloadlen = bufstrcpy payload !$"<html><script>alert('Hello F*!')</script><h1>Hello!</h1></html>" in
+          respond response payload payloadlen 
+        else
+          respond_404 response
+      else if (bufstrcmp request !$"POST ") then
+        let request = B.offset request 5ul in
+        if bufstrcmp request !$"/data" then
+          let payloadlen = bufstrcpy payload !$"<html><h1>I received data!</h1></html>" in
+          respond response payload payloadlen 
+        else
+          respond_404 response
       else
-        respond_404 response
+        let n = bufstrcpy response !$"error" in
+        n
   in
-
   pop_frame ();
-
   n
+#pop-options
