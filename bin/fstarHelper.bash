@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 verifyFstarOption="-v"
 verifyFstarOptionLabel="Verify Fstar"
 

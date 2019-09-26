@@ -8,6 +8,8 @@ RUN cd ~ && \
     wget https://github.com/FStarLang/FStar/releases/download/V0.9.7.0-alpha1/fstar_0.9.7.0-alpha1_Linux_x86_64.tar.gz && \
     tar -zxvf fstar_0.9.7.0-alpha1_Linux_x86_64.tar.gz && \
     cp fstar/bin/fstar.exe /usr/local/bin/ && \
+    echo "FSTAR_HOME=/root/fstar" >> ~/.bashrc && \
+    source ~/.bashrc && \
     opam init -y && \
     opam install depext -y && \
     opam depext conf-gmp.1 -y && \
@@ -19,5 +21,6 @@ RUN cd ~ && \
     cp krml /usr/local/bin/ && \
     popd && \
     git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
-    cp fstar-tutorial/bin/fstarHelper.bash /usr/local/bin/fstarHelper && \
-    
+    pushd fstar-tutorial && \
+    ./setup.bash && \
+    popd
