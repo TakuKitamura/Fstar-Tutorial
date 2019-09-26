@@ -19,4 +19,5 @@ RUN cd ~ && \
     cp krml /usr/local/bin/ && \
     popd && \
     git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
-    pushd fstar-tutorial && \
+    cp fstar-tutorial/bin/fstarHelper.bash /usr/local/bin/fstarHelper && \
+    
