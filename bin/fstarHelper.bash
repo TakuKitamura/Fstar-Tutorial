@@ -1,8 +1,28 @@
 #!/bin/bash
 
-howToUse() {
+
+verifyFstarOption="-v"
+verifyFstarOptionLabel="Verify Fstar"
+
+execFstarOption="-e"
+execFstarOptionLabel="Exec Fstar"
+
+verifyLowStarOption="-vl"
+verifyLowStarOptionLabel="Verify LowStar"
+
+execLowStarOption="-el"
+execLowStarOptionLabel="Exec LowStar"
+
+usage() {
 		scriptName=`basename $0`
-        echo "./$scriptName [option] [fileName]"
+        echo "usage: $scriptName [option] [fileName]"
+		echo "option:"
+		echo "  $verifyFstarOption   $verifyFstarOptionLabel"
+		echo "  $execFstarOption   $execFstarOptionLabel"
+		echo "  $verifyLowStarOption  $verifyLowStarOptionLabel"
+		echo "  $execLowStarOption  $execLowStarOptionLabel"
+		echo "fileName: Relative or Absolute Path"
+		echo "# if you would like do other things, I need you to create Makefile in yourself."
 		exit 1
 }
 
@@ -23,24 +43,22 @@ macReadlink() {
 	echo $RESULT
 }
 
+if [ $# -ne 2 ]; then
+	usage
+fi
+
 option=$1
 
-verifiedFstarOption="-verifiedFstar" 
-execFstarOption="-execFstar"
-
-verifiedLowStarOption="-verifiedLowStar" 
-execLowStarOption="-execLowStar"
-
-if [ "$option" = "$verifiedFstarOption" ]; then
-        echo "verifiedFstar mode."
+if [ "$option" = "$verifyFstarOption" ]; then
+        echo [$verifyFstarOptionLabel]
 elif [ "$option" = "$execFstarOption" ]; then
-        echo "execFstar mode."
-elif [ "$option" = "$verifiedLowStarOption" ]; then
-        echo "verifiedLowStar mode."
+        echo [$execFstarOptionLabel]
+elif [ "$option" = "$verifyLowStarOption" ]; then
+        echo [$verifyLowStarOptionLabel]
 elif [ "$option" = "$execLowStarOption" ]; then
-        echo "execLowStar mode."
+        echo [$execLowStarOptionLabel]
 else
-	howToUse
+	usage
 fi
 
 fileName=$2
@@ -57,7 +75,7 @@ execFilePath=$dirFullPath/$execFileName
 tempDir=`mktemp -d`
 cd $tempDir
 
-if [ "$option" = "$verifiedFstarOption" ]; then
+if [ "$option" = "$verifyFstarOption" ]; then
 	fstar $fileFullPath
 elif [ "$option" = "$execFstarOption" ]; then
 	cat << EOS > Makefile
@@ -69,10 +87,10 @@ all:
 	$execFilePath
 EOS
 	make 
-elif [ "$option" = "$verifiedLowStarOption" ]; then
+elif [ "$option" = "$verifyLowStarOption" ]; then
         krml -verify -skip-extraction -skip-translation -skip-compilation  -skip-linking $fileFullPath 
 elif [ "$option" = "$execLowStarOption" ]; then
-        krml -verify -drop WasmSupport -tmpdir $outDirPath -no-prefix $firstUpperBaseFileName $fileFullPath && ./a.out && echo "done"
+        krml -verify -drop WasmSupport -tmpdir $outDirPath -no-prefix $firstUpperBaseFileName $fileFullPath && ./a.out
 else
-	howToUse
+	usage
 fi
