@@ -1,4 +1,4 @@
-module Main
+module MailHeaderParse
 open FStar.IO
 open FStar.Printf
 

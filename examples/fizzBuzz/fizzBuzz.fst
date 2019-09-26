@@ -64,3 +64,4 @@ let main ()
   let _ = decorate_fizzBuzz_array fizzBuzz_array n in
   pop_frame ();
   C.EXIT_SUCCESS
+

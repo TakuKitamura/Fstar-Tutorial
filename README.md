@@ -1,2 +1,2 @@
-# learnFstar
-fstar playground.
+# Fstar-Tutorial
+fstar Tutorial.
