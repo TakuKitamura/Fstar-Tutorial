@@ -1,8 +1,8 @@
 FROM ubuntu:18.04　
 LABEL maintainer="TakuKitamura <takukitamura.io@gmail.com>" \
       updatedAt="2019年 9月27日 金曜日 19時17分22秒 JST"
-ENV FSTAR_HOME /root/fstar
-ENV KREMLIN_HOME /root/kremlin
+ENV FSTAR_HOME /root/fstar \
+    KREMLIN_HOME /root/kremlin
 SHELL ["/bin/bash", "-c"]
 RUN set -x && \
     echo "Start!" && \
