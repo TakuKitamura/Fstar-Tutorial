@@ -29,9 +29,7 @@ RUN set -x && \
     popd && \
     ln -s /root/kremlin/krml /usr/local/bin/ && \
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
-    git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
-    pushd fstar-tutorial && \
-    ./setup.bash && \
-    popd && \
+    echo -e "call plug#begin()\nPlug 'TakuKitamura/fstar-kremlin-playground.vim'\ncall plug#end()" > ~/.vimrc && \
     vim -c PlugInstall -c q -c q && \
+    git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
     echo "Done!"
