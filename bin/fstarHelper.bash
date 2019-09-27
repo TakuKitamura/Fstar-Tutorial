@@ -61,7 +61,7 @@ else
 fi
 
 fileName=$2
-
+fstarExecFileName=fstar.exe
 fileFullPath=`readlink -f $fileName 2>/dev/null || macReadlink $fileName`
 dirFullPath=`dirname $fileFullPath`
 fstarExtention=".fst"
@@ -75,13 +75,13 @@ tempDir=`mktemp -d`
 cd $tempDir
 
 if [ "$option" = "$verifyFstarOption" ]; then
-	fstar $fileFullPath
+	$fstarExecFileName $fileFullPath
 elif [ "$option" = "$execFstarOption" ]; then
 	cat << EOS > Makefile
 include $FSTAR_HOME/ulib/ml/Makefile.include
 
 all:
-	fstar $fileFullPath --odir $outDirPath --codegen OCaml --extract '$baseFileName'
+	$fstarExecFileName $fileFullPath --odir $outDirPath --codegen OCaml --extract '$baseFileName'
 	\$(OCAMLOPT) -o $execFilePath $generatedOcamlPath
 	$execFilePath
 EOS
