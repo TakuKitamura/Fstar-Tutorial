@@ -25,8 +25,9 @@ if [ $ret = 0 ]; then
     echo "------------------------------------------------"
     cat /tmp/index.html
     echo "------------------------------------------------"
-    echo "Read html..."
-    open "/tmp/index.html" || cat /tmp/index.html
+    echo [read html]
+    echo "------------------------------------------------"
+    cat /tmp/index.html
     echo "Done!"
     exit 0
 else
