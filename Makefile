@@ -1,5 +1,5 @@
 test:
-	pushd examples/fizzBuzz && make && popd && \
-	pushd examples/httpProtocolMock && make && popd && \
-	pushd examples/for && make && popd && \
-	pushd examples/mailHeaderParse && make && popd
+	cd examples/fizzBuzz && make && cd ../../ && \
+	cd examples/httpProtocolMock && make && cd ../../ && \
+	cd examples/for && make && cd ../../ && \
+	cd examples/mailHeaderParse && make && cd ../../

@@ -1,15 +1,17 @@
 FROM ubuntu:18.04　
 LABEL maintainer="TakuKitamura <takukitamura.io@gmail.com>" \
-      updatedAt="2019年 9月27日 金曜日 19時17分22秒 JST"
-ENV FSTAR_HOME /root/fstar \
-    KREMLIN_HOME /root/kremlin
+      updatedAt="最終動作確認: 2019年 9月28日 土曜日 08時17分41秒 JST"
+ENV FSTAR_HOME="/root/fstar" \
+    KREMLIN_HOME="/root/kremlin" \
+    LANG="ja_JP.UTF-8"
 SHELL ["/bin/bash", "-c"]
 RUN set -x && \
     echo "Start!" && \
     echo "It takes about 30 minutes." && \
     cd ~ && \
     apt update  && \
-    apt install -y vim git make opam m4 wget curl && \
+    apt install -y vim git make opam m4 wget curl locales && \
+    locale-gen ja_JP.UTF-8 && \
     opam init -y && \
     opam install depext -y && \
     opam depext conf-gmp.1 -y && \
@@ -33,4 +35,6 @@ RUN set -x && \
     echo -e "call plug#begin()\nPlug 'TakuKitamura/fstar-kremlin-playground.vim'\ncall plug#end()" > ~/.vimrc && \
     vim -c PlugInstall -c q -c q && \
     git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
-    echo "Done!"
+    eval $(opam config env) && \
+    echo "Done!" && \
+    exec $SHELL -l
