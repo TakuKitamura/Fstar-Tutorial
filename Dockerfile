@@ -35,6 +35,7 @@ RUN set -x && \
     echo -e "call plug#begin()\nPlug 'TakuKitamura/fstar-kremlin-playground.vim'\ncall plug#end()" > ~/.vimrc && \
     vim -c PlugInstall -c q -c q && \
     git clone https://github.com/TakuKitamura/Fstar-Tutorial.git fstar-tutorial && \
-    eval $(opam config env) && \
+    echo '$(opam config env)' >> ~/.bashrc && \
+    source ~/.bashrc && \
     echo "Done!" && \
     exec $SHELL -l
