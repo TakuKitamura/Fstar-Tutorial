@@ -54,9 +54,9 @@ let decorate_fizzBuzz_array fizzBuzz_array n =
   C.Loops.for 0ul n inv body;
   C.EXIT_SUCCESS
 
-let main ()
-=
-  push_frame ();
+// val fizzBuzz 
+let fizzBuzz () =
+push_frame ();
   let n = 30ul in
   let fillData = !$"" in
   let fizzBuzz_array = B.alloca fillData n in
@@ -64,4 +64,3 @@ let main ()
   let _ = decorate_fizzBuzz_array fizzBuzz_array n in
   pop_frame ();
   C.EXIT_SUCCESS
-

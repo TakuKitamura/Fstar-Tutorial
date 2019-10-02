@@ -15,9 +15,6 @@ open LowStar.Printf
 type pointer t =
   b:B.buffer t { B.length b = 1 }
 
-type server_state =
-  pointer U32.t
-
 assume val bufstrcpy (b: B.buffer C.char) (s: C.String.t): Stack U32.t
   (requires (fun h ->
     B.live h b /\
