@@ -54,13 +54,13 @@ let decorate_fizzBuzz_array fizzBuzz_array n =
   C.Loops.for 0ul n inv body;
   C.EXIT_SUCCESS
 
-// val fizzBuzz 
-let fizzBuzz () =
-push_frame ();
-  let n = 30ul in
-  let fillData = !$"" in
-  let fizzBuzz_array = B.alloca fillData n in
-  let _ = create_fizzBuzz_array fizzBuzz_array n in
-  let _ = decorate_fizzBuzz_array fizzBuzz_array n in
-  pop_frame ();
-  C.EXIT_SUCCESS
+val fizzBuzzLib : n: U32.t{ 0 < U32.v n /\ U32.v n < 100000} -> Stack C.exit_code (fun _ -> True) (fun _ _ _ -> True)
+let fizzBuzzLib n =
+    push_frame ();
+      let fillData = !$"" in
+      let fizzBuzz_array = B.alloca fillData n in
+      let _ = create_fizzBuzz_array fizzBuzz_array n in
+      let _ = decorate_fizzBuzz_array fizzBuzz_array n in
+    pop_frame ();
+    C.EXIT_SUCCESS
+  
