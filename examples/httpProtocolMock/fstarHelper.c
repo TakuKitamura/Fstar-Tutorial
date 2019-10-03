@@ -3,7 +3,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "HttpProtocolMock.h"
+#include "HttpServer.h"
 
 char char_of_uint8(uint8_t x) {
   return (char) x;

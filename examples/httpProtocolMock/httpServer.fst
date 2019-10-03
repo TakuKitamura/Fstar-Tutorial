@@ -1,4 +1,4 @@
-module HttpProtocolMock
+module HttpServer
 
 module B = LowStar.Buffer
 module M = LowStar.Modifies
@@ -141,11 +141,6 @@ let bufstrcmp b s =
   let h4 = ST.get () in
   r
 
-
-
-
-#set-options "--max_ifuel 0 --max_fuel 0"
-
 val respond: (response: B.buffer C.char) -> (payload: B.buffer C.char) -> (payloadlen: U32.t) ->
   Stack U32.t
     (requires (fun h0 ->
@@ -163,7 +158,6 @@ val respond: (response: B.buffer C.char) -> (payload: B.buffer C.char) -> (paylo
       U32.v n <= 128 + U32.v payloadlen
     ))
 
-#push-options "--z3rlimit 20"
 let respond response payload payloadlen =
   let n1 = bufstrcpy response !$"HTTP/1.1 200 OK\r\nConnection: closed\r\nContent-Length:" in
   let response = B.offset response n1 in
@@ -173,7 +167,6 @@ let respond response payload payloadlen =
   let response = B.offset response n3 in
   let t = blit payload 0ul response 0ul payloadlen in
   U32.(n1 +^ n2 +^ n3 +^ payloadlen)
-#pop-options
 
 #reset-options "--z3cliopt smt.arith.nl=false --z3rlimit 50 --max_ifuel 0 --max_fuel 0"
 
@@ -199,22 +192,24 @@ let respond_404 (response: B.buffer C.char): Stack U32.t
   pop_frame ();
   n
 
-#reset-options "--max_ifuel 0 --max_fuel 0"
+unfold noextract
+let request_length = 2048
+
 unfold noextract
 let response_length = 2048
 
-val server (request response: B.buffer C.char):
+val httpServerLib (request response: B.buffer C.char):
   Stack U32.t
     (requires (fun h ->
       B.live h request /\ B.live h response /\
       B.disjoint request response /\
       zero_terminated h request /\
+      B.length request = request_length /\
       B.length response = response_length))
     (ensures (fun h0 _ h1 ->
       B.live h1 request /\ B.live h1 response))
 
-#push-options "--z3rlimit 20"
-let server request response =
+let httpServerLib request response =
   push_frame ();
   let n =
     let payload = B.alloca (C.char_of_uint8 0uy) 256ul in
@@ -241,4 +236,3 @@ let server request response =
   in
   pop_frame ();
   n
-#pop-options
