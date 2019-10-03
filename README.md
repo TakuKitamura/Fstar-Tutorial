@@ -68,7 +68,6 @@ Z3 version 4.8.5 - 64 bit
 ```sh
 # pwd
 /hoge/fuga/hoge/Fstar-Tutorial
-# make test # 全てのサンプルコードを実行
 # pushd examples/[fizzBuzz | for | httpProtocolMock | mailHeaderParse | ...] # どれかのディレクトリ
 # make # 個別に実行
 # popd

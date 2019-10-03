@@ -24,6 +24,17 @@ void http(int sockfd) {
     return;
   }
 
+
+  // val httpServerLib (request response: B.buffer C.char):
+  //   Stack U32.t
+  //     (requires (fun h ->
+  //       B.live h request /\ B.live h response /\
+  //       B.disjoint request response /\
+  //       zero_terminated h request /\
+  //       B.length request = request_length /\
+  //       B.length response = response_length))
+  //     (ensures (fun h0 _ h1 ->
+  //       B.live h1 request /\ B.live h1 response))
   httpServerLib((char *) request, response);
 
   if (write(sockfd, response, strlen(response)) != strlen(response)) {
@@ -52,8 +63,6 @@ void signalHandler(int signal){
 int main(int argc, char *argv[]) {
 
   signal( SIGINT, signalHandler);
-
-  puts("Listening on http://localhost");
 
   int writer_len;
 
@@ -93,6 +102,8 @@ int main(int argc, char *argv[]) {
       }
       return 1;
   }
+
+  puts("Listening on http://localhost");
 
   while(1) {
       if ((new_sockfd = accept(sockfd, (struct sockaddr *)&writer_addr, (socklen_t *)&writer_len)) < 0) {
