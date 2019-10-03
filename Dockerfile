@@ -1,6 +1,6 @@
 FROM ubuntu:18.04　
 LABEL maintainer="TakuKitamura <takukitamura.io@gmail.com>" \
-      updatedAt="最終動作確認: 2019年 9月28日 土曜日 08時17分41秒 JST"
+      updatedAt="最終動作確認: 2019年 10月 3日 木曜日 14時23分49秒 JST"
 ENV FSTAR_HOME="/root/fstar" \
     KREMLIN_HOME="/root/kremlin" \
     LANG="ja_JP.UTF-8"
@@ -10,7 +10,7 @@ RUN set -x && \
     echo "It takes about 30 minutes." && \
     cd ~ && \
     apt update  && \
-    apt install -y vim git make opam m4 wget curl locales && \
+    apt install -y vim git make opam m4 wget curl locales lsof && \
     locale-gen ja_JP.UTF-8 && \
     opam init -y && \
     opam install depext -y && \

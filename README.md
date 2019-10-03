@@ -27,8 +27,8 @@ Docker version 19.03.2, build 6a30dfc
 インストール後､dockerがインストールされており､起動していることを確認してください｡
 
 ```sh
-$ docker pull takukitamura/fstar-tutorial-image:1.0.0
-$ docker run -it takukitamura/fstar-tutorial-image:1.0.0 /bin/bash
+$ docker pull takukitamura/fstar-tutorial-image:1.0.1
+$ docker run -it takukitamura/fstar-tutorial-image:1.0.1 /bin/bash
 # cd
 # pwd
 /root
